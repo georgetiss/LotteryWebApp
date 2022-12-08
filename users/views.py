@@ -51,6 +51,8 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
+
+
         # sends user to login page
         return redirect(url_for('users.login'))
 

@@ -6,3 +6,4 @@ email_validator
 bcrypt
 cryptography
 python-dotenv
+flask_Talisman
