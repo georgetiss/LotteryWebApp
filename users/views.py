@@ -1,6 +1,8 @@
 # IMPORTS
-from flask import Blueprint, render_template, flash, redirect, url_for
+import logging
 
+from flask import Blueprint, render_template, flash, redirect, url_for, request
+from datetime import datetime
 from app import db
 from models import User
 from users.forms import RegisterForm
@@ -21,7 +23,6 @@ users_blueprint = Blueprint('users', __name__, template_folder='templates')
 @users_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
 
-
     # create signup form object
     form = RegisterForm()
 
@@ -35,9 +36,6 @@ def register():
             flash('Email address already exists')
             return render_template('users/register.html', form=form)
 
-        #generate a encyrption key
-        secret_key = Fernet.generate_key()
-
 
         # create a new user with the form data
         new_user = User(email=form.email.data,
@@ -45,13 +43,16 @@ def register():
                         lastname=form.lastname.data,
                         phone=form.phone.data,
                         password=bcrypt.hashpw(form.password.data.encode('utf-8'), bcrypt.gensalt()),
-                        role='user',
-                        encrypt_key=secret_key)
+                        role='user')
 
         # add the new user to the database
         db.session.add(new_user)
         db.session.commit()
 
+        logging.warning('SECURITY - Register [%s, %s]',
+                        form.email.data,
+                        request.remote_addr
+                        )
 
 
         # sends user to login page
@@ -63,7 +64,6 @@ def register():
 
 # view user login
 @users_blueprint.route('/login', methods=['GET', 'POST'])
-@login_required
 def login():
 
     #creates a login form object
@@ -93,6 +93,19 @@ def login():
 
         else:
             login_user(user)
+            # upadtes login times in the users databasee
+            user.datetime_prev_login = user.datetime_curr_login
+            user.datetime_curr_login = datetime.now()
+            db.session.add(user)
+            db.session.commit()
+
+            # logs login in log
+            logging.warning('SECURTIY - User registration [%s, %s, %s]',
+                            user.id,
+                            user.username,
+                            request.remote_addr
+                            )
+
             if user.role == "admin":
                 return redirect(url_for('users.profile'))
             else:
@@ -129,5 +142,11 @@ def account():
 @users_blueprint.route('/logout')
 @login_required
 def logout():
+    logging.warning('SECURITY - Log out [%s, %s, %s]',
+                    current_user.id,
+                    user.email,
+                    request.remote_addr
+                    )
+
     logout_user()
     return redirect(url_for('main.index'))

@@ -6,6 +6,23 @@ from flask_login import LoginManager
 from flask_login import login_required
 from dotenv import load_dotenv
 from flask_talisman import Talisman
+import logging
+
+# configure a logger
+class SecurityFilter(logging.Filter):
+    def filter(self, record):
+        return 'SECURITY' in record.getMessage()
+
+
+logger = logging.getLogger()
+file_handler = logging.FileHandler('lottery.log', 'a')
+file_handler.addFilter(SecurityFilter())
+formatter = logging.Formatter('%(asctime)s : %(message)s', '%m/%d/%Y %I:%M:%S %p')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+# load .env
+load_dotenv()
 
 # CONFIG
 app = Flask(__name__)
@@ -15,6 +32,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['RECAPTCHA_PUBLIC_KEY'] = os.getenv('RECAPTCHA_PUBLIC_KEY')
 app.config['RECAPTCHA_PRIVATE_KEY'] = os.getenv('RECAPTCHA_PRIVATE_KEY')
+
 
 # initialise database
 db = SQLAlchemy(app)

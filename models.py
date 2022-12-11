@@ -19,10 +19,16 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(100), nullable=False, default='user')
     encrypt_Key = db.Column(db.String(100), nullable=False)
 
+    # Log information
+    datetime_reg = db.Colummn(db.DateTime, nullable=False)
+    datetime_curr_login = db.Column(db.DateTime, nullable=True)
+    datetime_prev_login = db.Column(db.DateTime, nullable=True)
+
     # Define the relationship to Draw
     draws = db.relationship('Draw')
 
-    def __init__(self, email, firstname, lastname, phone, password, role, encrypt_key):
+    def __init__(self, email, firstname, lastname, phone, password, role,
+                 encrypt_key):
         self.email = email
         self.firstname = firstname
         self.lastname = lastname
@@ -30,7 +36,9 @@ class User(db.Model, UserMixin):
         self.password = password
         self.role = role
         self.encrypt_Key = encrypt_key
-
+        self.datetime_reg = datetime.now()
+        self.datetime_curr_login = None
+        self.datetime_prev_login = None
 
 
 class Draw(db.Model):
