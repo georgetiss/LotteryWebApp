@@ -3,6 +3,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_login import LoginManager
+from flask_login import login_required
 from dotenv import load_dotenv
 from flask_talisman import Talisman
 
@@ -20,11 +21,11 @@ db = SQLAlchemy(app)
 
 # sets up talisman for HTTP security headers
 csp = {
-    'default-src' : [
+    'default-src': [
         '\'self\'',
         'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css'
     ],
-    'frame-src' : [
+    'frame-src': [
         '\'self\'',
         'https://www.google.com/recaptcha/',
         'https://recaptcha.google.com/recaptcha/'
@@ -36,9 +37,9 @@ csp = {
         'https://www.gstatic.com/recaptcha/'
     ]
 
-
 }
 talisman = Talisman(app, content_security_policy=csp)
+talisman.force_https = False
 
 # load env
 load_dotenv()
@@ -66,7 +67,7 @@ app.register_blueprint(admin_blueprint)
 app.register_blueprint(lottery_blueprint)
 app.register_blueprint(errors_blueprint)
 
-# instance of loginmanager
+# instance of Loginmanager
 login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.init_app(app)

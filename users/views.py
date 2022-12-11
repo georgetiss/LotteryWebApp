@@ -11,6 +11,7 @@ from flask import session
 from flask import Markup
 from flask_login import logout_user, login_user
 #from flask_login import LoginManager
+from flask_login import login_required
 # CONFIG
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
@@ -62,6 +63,7 @@ def register():
 
 # view user login
 @users_blueprint.route('/login', methods=['GET', 'POST'])
+@login_required
 def login():
 
     #creates a login form object
@@ -101,6 +103,7 @@ def login():
 
 # view user profile
 @users_blueprint.route('/profile')
+@login_required
 def profile():
     return render_template('users/profile.html', name="PLACEHOLDER FOR FIRSTNAME")
 
@@ -113,6 +116,7 @@ def reset():
 
 # view user account
 @users_blueprint.route('/account')
+@login_required
 def account():
     return render_template('users/account.html',
                            acc_no="PLACEHOLDER FOR USER ID",
@@ -123,6 +127,7 @@ def account():
 
 
 @users_blueprint.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
