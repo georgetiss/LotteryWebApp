@@ -24,7 +24,6 @@ def phone_validate(form, field):
 
 
 class RegisterForm(FlaskForm):
-    recaptcha = RecaptchaField()
     email = StringField(
         validators=[input_required("Email is required."), Email()]
     )
@@ -47,7 +46,9 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
+    recaptcha = RecaptchaField()
     email = StringField(validators=[DataRequired(), Email()])
     password = PasswordField(validators=[DataRequired()])
+    pin = StringField(validators=[DataRequired()])
     submit = SubmitField()
 

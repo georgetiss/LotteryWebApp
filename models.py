@@ -20,7 +20,7 @@ class User(db.Model, UserMixin):
     encrypt_Key = db.Column(db.String(100), nullable=False)
 
     # Log information
-    datetime_reg = db.Colummn(db.DateTime, nullable=False)
+    datetime_reg = db.Column(db.DateTime, nullable=False)
     datetime_curr_login = db.Column(db.DateTime, nullable=True)
     datetime_prev_login = db.Column(db.DateTime, nullable=True)
 

@@ -49,11 +49,9 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        logging.warning('SECURITY - Register [%s, %s]',
-                        form.email.data,
-                        request.remote_addr
-                        )
-
+        #logging.warning('SECURITY - Register [%s, %s]',
+                        #form.email.data,
+                        #request.remote_addr)
 
         # sends user to login page
         return redirect(url_for('users.login'))
@@ -100,18 +98,18 @@ def login():
             db.session.commit()
 
             # logs login in log
-            logging.warning('SECURTIY - User registration [%s, %s, %s]',
-                            user.id,
-                            user.username,
-                            request.remote_addr
-                            )
+            #logging.warning('SECURTIY - User registration [%s, %s, %s]',
+                            #user.id,
+                            #user.username,
+                            #request.remote_addr
+                            #)
 
             if user.role == "admin":
                 return redirect(url_for('users.profile'))
             else:
                 return redirect(url_for('admin.admin'))
 
-    return render_template('users/login.html')
+    return render_template('users/login.html', form=form)
 
 
 # view user profile

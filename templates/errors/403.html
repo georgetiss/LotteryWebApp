@@ -2,8 +2,10 @@
 
 {% block body %}
 
-<p>Forbidden request.</p>
-<br>
-<p>Error {{ error }}</p>
+<{% block content %}
+
+    <h2 class="title is-2">Forbidden</h2>
+
+{% endblock %}
 
 {% endblock %}

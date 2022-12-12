@@ -3,11 +3,11 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_login import LoginManager
-from flask_login import login_required
 from dotenv import load_dotenv
 from flask_talisman import Talisman
 import logging
 
+"""
 # configure a logger
 class SecurityFilter(logging.Filter):
     def filter(self, record):
@@ -20,7 +20,7 @@ file_handler.addFilter(SecurityFilter())
 formatter = logging.Formatter('%(asctime)s : %(message)s', '%m/%d/%Y %I:%M:%S %p')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
-
+"""
 # load .env
 load_dotenv()
 
@@ -57,7 +57,7 @@ csp = {
 
 }
 talisman = Talisman(app, content_security_policy=csp)
-talisman.force_https = False
+talisman.strict_transport_security = False
 
 # load env
 load_dotenv()
@@ -76,14 +76,12 @@ def index():
 from users.views import users_blueprint
 from admin.views import admin_blueprint
 from lottery.views import lottery_blueprint
-from errors import errors_blueprint
 
 
 # # register blueprints with app
 app.register_blueprint(users_blueprint)
 app.register_blueprint(admin_blueprint)
 app.register_blueprint(lottery_blueprint)
-app.register_blueprint(errors_blueprint)
 
 # instance of Loginmanager
 login_manager = LoginManager()
@@ -95,6 +93,32 @@ from models import User
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+# error handling
+@app.errorhandler(400)
+def bad_request(error):
+    return render_template("errors/400.html"), 400
+
+
+@app.errorhandler(403)
+def page_forbidden(error):
+    return render_template("errors/403.html"), 403
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("errors/404.html"), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return render_template("errors/500.html"), 500
+
+
+@app.errorhandler(503)
+def service_unavailable(error):
+    return render_template("errors/503.html"), 503
+
 
 if __name__ == "__main__":
     app.run()
