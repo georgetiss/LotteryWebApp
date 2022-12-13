@@ -19,7 +19,7 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(100), nullable=False, default='user')
     encrypt_Key = db.Column(db.String(100), nullable=False)
 
-    # Log information
+    # Logging information
     datetime_reg = db.Column(db.DateTime, nullable=False)
     datetime_curr_login = db.Column(db.DateTime, nullable=True)
     datetime_prev_login = db.Column(db.DateTime, nullable=True)

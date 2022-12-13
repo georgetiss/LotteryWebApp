@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import *
 import re
-#from flask_wtf import RecaptchaField
+from flask_wtf import RecaptchaField
 
 
 def password_validate(form, field):
@@ -16,6 +16,7 @@ def name_validate(form, field):
     n = re.compile(r'(?=.*\W)')
     if n.match(field.data):
         raise ValidationError("First and last name cannot contain a special character.")
+
 
 def phone_validate(form, field):
     p = re.compile(r'(\d{4} [-] \d{3} [-] \d{4})')

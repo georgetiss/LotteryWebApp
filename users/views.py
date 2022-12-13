@@ -36,7 +36,6 @@ def register():
             flash('Email address already exists')
             return render_template('users/register.html', form=form)
 
-
         # create a new user with the form data
         new_user = User(email=form.email.data,
                         firstname=form.firstname.data,
@@ -48,7 +47,7 @@ def register():
         # add the new user to the database
         db.session.add(new_user)
         db.session.commit()
-
+        # logs registration in log file
         logging.warning('SECURITY - Register [%s, %s]',
                         form.email.data,
                         request.remote_addr)
@@ -83,19 +82,20 @@ def login():
                             request.remote_addr
                             )
             session['authentication_attempt'] += 1
+            # outputs that attempts exceeded allowed limit
             if session.get('authentication_attempts') >= 3:
                 flash(Markup('Number of incorrect login attempts exceeded.'
                              'Please click <a href="/reset">here</a> to reset.'))
-
+            # outputs remaining attempts before lockout
             attempts_remaining = 3-session.get('authentication_attempts')
             flash('Please check login details and try again,'
-                  '{} login attempts remaining' .format(3 - session.get('authentication_attempts')))
+                  '{} login attempts remaining' .format(attempts_remaining))
 
-            render_template('users/login.html', form=form)
+            render_template('users/login.html', form=form, )
 
         else:
             login_user(user)
-            # upadtes login times in the users databasee
+            # updates login times in the users database
             user.datetime_prev_login = user.datetime_curr_login
             user.datetime_curr_login = datetime.now()
             db.session.add(user)
@@ -144,6 +144,7 @@ def account():
 @users_blueprint.route('/logout')
 @login_required
 def logout():
+    # logs the logout in log file
     logging.warning('SECURITY - Log out [%s, %s, %s]',
                     current_user.id,
                     current_user.email,
