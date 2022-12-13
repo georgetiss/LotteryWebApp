@@ -12,7 +12,7 @@ from cryptography.fernet import Fernet
 from flask import session
 from flask import Markup
 from flask_login import logout_user, login_user
-#from flask_login import LoginManager
+from flask_login import *
 from flask_login import login_required
 # CONFIG
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
@@ -142,7 +142,7 @@ def account():
 def logout():
     logging.warning('SECURITY - Log out [%s, %s, %s]',
                     current_user.id,
-                    user.email,
+                    current_user.email,
                     request.remote_addr
                     )
 

@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from dotenv import load_dotenv
 from flask_talisman import Talisman
 import logging
+from functools import wraps
 
 """
 # configure a logger
@@ -63,6 +64,19 @@ talisman.strict_transport_security = False
 load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
+
+def requires_roles(*roles):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+
+            if current_user.role not in roles:
+                return render_template('errors/403.html')
+
+            return f(*args, **kwargs)
+        return wrapped
+    return wrapper
 
 
 # HOME PAGE VIEW

@@ -1,6 +1,6 @@
 # IMPORTS
 from flask import Blueprint, render_template, request, flash
-from app import db
+from app import db, requires_roles
 from models import User, Draw
 
 # CONFIG
@@ -140,6 +140,7 @@ def run_lottery():
 
 # view last 10 log entries
 @admin_blueprint.route('/logs', methods=['POST'])
+@roles_required('admin')
 def logs():
     with open("lottery.log", "r") as f:
         content = f.read().splitlines()[-10:]
