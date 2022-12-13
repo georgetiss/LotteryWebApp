@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import *
 import re
-from flask_wtf import RecaptchaField
+#from flask_wtf import RecaptchaField
 
 
 def password_validate(form, field):
@@ -46,7 +46,7 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    recaptcha = RecaptchaField()
+    #recaptcha = RecaptchaField()
     email = StringField(validators=[DataRequired(), Email()])
     password = PasswordField(validators=[DataRequired()])
     pin = StringField(validators=[DataRequired()])

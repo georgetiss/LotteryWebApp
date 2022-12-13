@@ -2,13 +2,13 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 import os
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from dotenv import load_dotenv
 from flask_talisman import Talisman
 import logging
 from functools import wraps
 
-"""
+
 # configure a logger
 class SecurityFilter(logging.Filter):
     def filter(self, record):
@@ -16,18 +16,20 @@ class SecurityFilter(logging.Filter):
 
 
 logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 file_handler = logging.FileHandler('lottery.log', 'a')
+file_handler.setLevel(logging.WARNING)
 file_handler.addFilter(SecurityFilter())
 formatter = logging.Formatter('%(asctime)s : %(message)s', '%m/%d/%Y %I:%M:%S %p')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
-"""
+
 # load .env
 load_dotenv()
 
 # CONFIG
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'LongAndRandomSecretKey'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lottery.db'
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

@@ -49,9 +49,9 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        #logging.warning('SECURITY - Register [%s, %s]',
-                        #form.email.data,
-                        #request.remote_addr)
+        logging.warning('SECURITY - Register [%s, %s]',
+                        form.email.data,
+                        request.remote_addr)
 
         # sends user to login page
         return redirect(url_for('users.login'))
@@ -78,6 +78,10 @@ def login():
 
         # checks if user existed when queried and passwords match
         if not user or not bcrypt.checkpw(form.password.data.encode('utf-8'),user.password):
+            logging.warning('SECURITY - Invalid Login [%s, %s]',
+                            user.id,
+                            request.remote_addr
+                            )
             session['authentication_attempt'] += 1
             if session.get('authentication_attempts') >= 3:
                 flash(Markup('Number of incorrect login attempts exceeded.'
@@ -98,11 +102,11 @@ def login():
             db.session.commit()
 
             # logs login in log
-            #logging.warning('SECURTIY - User registration [%s, %s, %s]',
-                            #user.id,
-                            #user.username,
-                            #request.remote_addr
-                            #)
+            logging.warning('SECURTIY - User Login [%s, %s, %s]',
+                            user.id,
+                            user.username,
+                            request.remote_addr
+                            )
 
             if user.role == "admin":
                 return redirect(url_for('users.profile'))
@@ -116,7 +120,7 @@ def login():
 @users_blueprint.route('/profile')
 @login_required
 def profile():
-    return render_template('users/profile.html', name="PLACEHOLDER FOR FIRSTNAME")
+    return render_template('users/profile.html', name="current_user.firstname")
 
 
 @users_blueprint.route('/reset')
@@ -130,11 +134,11 @@ def reset():
 @login_required
 def account():
     return render_template('users/account.html',
-                           acc_no="PLACEHOLDER FOR USER ID",
-                           email="PLACEHOLDER FOR USER EMAIL",
-                           firstname="PLACEHOLDER FOR USER FIRSTNAME",
-                           lastname="PLACEHOLDER FOR USER LASTNAME",
-                           phone="PLACEHOLDER FOR USER PHONE")
+                           acc_no="current_user.id",
+                           email="current_user.email",
+                           firstname="current_user.firstname",
+                           lastname="current_user.lastname",
+                           phone="current_user.phone")
 
 
 @users_blueprint.route('/logout')
